@@ -32,47 +32,6 @@ def cleanup_song(song):
     song = song.strip()
     return song
 
-def old_dl():
-    file_name = sys.argv[1]
-    include_artist = sys.argv[2]
-    folder = os.path.splitext(file_name)[0]
-
-    if not os.path.exists(folder):
-        os.mkdir(folder)
-        
-    wrkbk  = openpyxl.load_workbook(file_name)
-    sheet = wrkbk.active
-    for row in sheet.iter_rows(min_row = 2, max_col = 8):
-        song = row[2].value
-        if song:
-            try:
-                link = row[3].hyperlink.target
-            except:
-                link, song = song.split('by')[1::2]
-
-            song = cleanup_song(song)
-            hostname = urlparse(link).hostname
-            if hostname in ["www.youtube.com", "youtu.be"]:
-                out_path = f"{folder}/{song}.%(ext)s"
-                proc = subprocess.run([
-                    'yt-dlp',
-                    '-x', '-q',
-                    '--encoding', 'utf-8',
-                    '-o', f'{out_path}',
-                    link
-                    ], encoding = 'utf-8')
-            elif hostname in ["files.catbox.moe", "openings.moe", "ladist1.catbox.video"]:
-                response = requests.get(link)
-                extension = link.split(".")[-1]
-                fileName = f"{folder}/{song}.{extension}"
-                with open(fileName, "wb") as file:
-                    file.write(response.content)
-                if(extension == "webm"):
-                    subprocess.run(['ffmpeg', '-i', fileName, f"{folder}/{song}.mp3"])
-                    os.remove(fileName)
-            else:
-                raise Exception("Hostname not recognized", hostname)        
-
 def get_columns(sheet, isMp3): 
     song_column = None
     link_column = None
