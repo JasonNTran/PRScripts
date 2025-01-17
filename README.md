@@ -19,12 +19,21 @@ Downloads all the audio or video links in a PR sheet. Can be used to download vi
 
 - ## <ins>PR List</ins>
 
-Adds shows to a list based on the shows on a sheet. Will also make notes on the list what sheets have been used and why each show was added (song and PR)
+Adds shows to a list based on the shows on a sheet. Will also make notes on the list what sheets have been used and why each show was added (song and PR). Requires an Anilist token, which can be obtained and stored through Anilist Operations
 
 ---
 
 - ## <ins>Panel Generator</ins>
 
-Creates all the panels needed for a PR result video based on a sheet. Background can be changed freely as long as its a 1920x1080 image. The video frame, if changed, will need changes to the box locations to accurate write the total score, rank, and song type
+Creates all the panels needed for a PR result video based on a sheet. Background can be changed freely as long as its a 1920x1080 image. The video frame, if changed, will need changes to the box locations to accurate write the total score, rank, and song type.
 
+Various settings at the top can be changed to improve the look and feel based on the template used and number of members. This includes number of columns per half, spacing between avatars, and avatar size. If a different video frame is used, the position of the boxes in the settings will also need to be changed 
+
+The sheet several columns to work properly. It needs:
+- An anime column containing "Anime" (Ex. Anime, Anime Info, Anime Name)
+- A song name column called one of the following: 'song info', 'songinfo', 'songartist', "song name", "songname"
+- A total column "Total"
+- A rank column "Rank"
+- A nominator column "Nominator"
+- A column for each ranker with their name matching their avatar icon file name
 ---
