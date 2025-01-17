@@ -75,8 +75,6 @@ def get_user_about(username):
     response = handleRequest(query, variables)
     if response['User']['about'] is None:
         return []
-    # test = response['User']['about'].split("\n")
-    # print(f"[DEBUG] {test}")
     return response['User']['about'].split("\n")
 
 def write_user_about(username, user_about, sheets_list, token):
@@ -96,7 +94,7 @@ def write_user_about(username, user_about, sheets_list, token):
         'about': string_about
     }
     
-    # print(f"[INFO] Writing to User's about")
+    print(f"[INFO] Writing to User's about")
     handleRequest(query, variables, token)
 
 def add_anime(anilist_id, anime_info, media_entry, notes, token):
@@ -171,15 +169,8 @@ def get_anilist_id(show, song, sheet):
         parsed = json.loads(r.content)
         if not parsed:
             return None
-            # raise Exception(f"[ERROR] Could not find song: / {song} / from show: / {show} / from pr / {sheet} /")
-        print("###########")
-        print(show.encode('utf-8'))
-        print(song.encode('utf-8'))
-        print(parsed[0]["linked_ids"]["anilist"])
-        print("###########")
         for item in parsed:
             print(item.encode)
-        print("###########")
         return parsed[0]["linked_ids"]["anilist"]
     else:
         raise Exception(f"[ERROR] Response returned {r.status_code}: {r.text}")
@@ -243,32 +234,32 @@ def generate_anilist(file_path, user_name, token):
     user_about = get_user_about(user_name)
     sheets_list = get_all_sheets(file_path, user_about)
     anime_list, manual_add = get_anime_from_sheet(file_path, sheets_list)
-    # if anime_list is not None and len(sheets_list) != 0:
-    #     entries = get_all_entries(user_name)
-    #     entry_dict = {}
-    #     if entries:
-    #         entry_list = entries[0]['entries']
-    #         entry_dict = dict((i['mediaId'], {'id' : i['id'], 'notes': i['notes']}) for i in entry_list)
+    if anime_list is not None and len(sheets_list) != 0:
+        entries = get_all_entries(user_name)
+        entry_dict = {}
+        if entries:
+            entry_list = entries[0]['entries']
+            entry_dict = dict((i['mediaId'], {'id' : i['id'], 'notes': i['notes']}) for i in entry_list)
 
-    #     for anilist_id in anime_list:
-    #         anime_info = anime_list[anilist_id]
-    #         media_entry = entry_dict.get(anilist_id, None)
-    #         notes = handleNotes(media_entry, anime_info)
-    #         add_anime(anilist_id, anime_info, media_entry, notes, token)
+        for anilist_id in anime_list:
+            anime_info = anime_list[anilist_id]
+            media_entry = entry_dict.get(anilist_id, None)
+            notes = handleNotes(media_entry, anime_info)
+            add_anime(anilist_id, anime_info, media_entry, notes, token)
 
-    #     write_user_about(user_name, user_about, sheets_list, token)
-    #     print("[INFO] Finished adding shows.")
-    #     if len(manual_add) != 0:
-    #         print("Listing shows to add manually")
-    #         file = open("manual_add.txt", "a", encoding='utf-8')
-    #         for entry in manual_add:
-    #             line = (f"[INFO] Add show / {entry['anime_name'].encode('utf-8')} /" +
-    #                     f"for song /{entry['song_name'].encode('utf-8')} /" + 
-    #                     f"in pr / {entry['pr'].encode('utf-8')} /\n")
-    #             file.write(line)
-    #             print(line)
-    # else:
-    #     print("[INFO] Nothing to add. Exiting")
+        write_user_about(user_name, user_about, sheets_list, token)
+        print("[INFO] Finished adding shows.")
+        if len(manual_add) != 0:
+            print("Listing shows to add manually")
+            file = open("manual_add.txt", "a", encoding='utf-8')
+            for entry in manual_add:
+                line = (f"[INFO] Add show / {entry['anime_name'].encode('utf-8')} /" +
+                        f"for song /{entry['song_name'].encode('utf-8')} /" + 
+                        f"in pr / {entry['pr'].encode('utf-8')} /\n")
+                file.write(line)
+                print(line)
+    else:
+        print("[INFO] Nothing to add. Exiting")
 
 def get_token(user_name):
     SQL_DB_URL = "sqlite:///auth.db"
